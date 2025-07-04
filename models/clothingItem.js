@@ -35,7 +35,7 @@ const clothingItemSchema = new mongoose.Schema({
       default: [],
     },
   ],
-  creatdAt: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
