@@ -42,14 +42,14 @@ const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
-      return User.create({
+    .then((hash) =>
+      User.create({
         name,
         avatar,
         email,
         password: hash,
-      });
-    })
+      })
+    )
     .then((user) => {
       const userWithoutPassword = user.toObject();
       delete userWithoutPassword.password;

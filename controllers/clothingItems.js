@@ -72,7 +72,7 @@ const createItem = (req, res) => {
   if (!name || !weather || !imageUrl) {
     return res
       .status(BAD_REQUEST)
-      .send({ message: "All feilds are required." });
+      .send({ message: "All fields are required." });
   }
 
   const owner = req.user._id;
@@ -100,9 +100,9 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
-        return res
-          .status(FORBIDDEN)
-          .send({ message: "You do not have permission to delete this item." });
+        return res.status(FORBIDDEN).send({
+          message: "You do not have permission to delete this item.",
+        });
       }
       return item
         .deleteOne()

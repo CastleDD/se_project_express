@@ -5,10 +5,11 @@ const userRouter = require("./users");
 const clothingItemRouter = require("./clothingItems");
 const auth = require("../middlewares/auth");
 const { NOT_FOUND } = require("../utils/errors");
+const { getItems } = require("../controllers/clothingItems");
 
 router.post("/signin", login);
 router.post("/signup", createUser);
-router.get("/items", clothingItemRouter);
+router.get("/items", getItems);
 
 router.use(auth);
 
