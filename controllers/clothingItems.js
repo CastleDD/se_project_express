@@ -77,7 +77,7 @@ const createItem = (req, res) => {
 
   const owner = req.user._id;
 
-  Item.create({ name, weather, imageUrl, owner })
+  return Item.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       console.error(err);
