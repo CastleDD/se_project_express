@@ -174,7 +174,6 @@ async function seed() {
   try {
     await mongoose.connect(MONGO_URL);
 
-    // 1️⃣ Create or find system user
     const systemEmail = "system@example.com";
     let systemUser = await User.findOne({ email: systemEmail });
 
@@ -186,12 +185,11 @@ async function seed() {
         password: hashedPassword,
         avatar: "https://example.com/system-avatar.png",
       });
-      console.log("✅ Created system user");
+      console.log("Created system user");
     } else {
-      console.log("ℹ️ System user already exists");
+      console.log("System user already exists");
     }
 
-    // 2️⃣ Clear and insert items
     await ClothingItem.deleteMany({});
     const itemsWithOwner = defaultClothingItems.map((Item) => ({
       ...Item,
@@ -199,11 +197,11 @@ async function seed() {
     }));
 
     await ClothingItem.insertMany(itemsWithOwner);
-    console.log(`✅ Inserted ${itemsWithOwner.length} default items.`);
+    console.log(`Inserted ${itemsWithOwner.length} default items.`);
 
     process.exit();
   } catch (err) {
-    console.error("❌ Error seeding default items:", err);
+    console.error("Error seeding default items:", err);
     process.exit(1);
   }
 }
