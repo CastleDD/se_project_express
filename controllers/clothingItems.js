@@ -99,7 +99,7 @@ const deleteItem = (req, res) => {
   Item.findById(itemId)
     .orFail()
     .then((item) => {
-      if (item.owner.toString() !== userId) {
+      if (item.owner.toString() !== userId && !item.isDefault) {
         return res.status(FORBIDDEN).send({
           message: "You do not have permission to delete this item.",
         });
@@ -110,7 +110,6 @@ const deleteItem = (req, res) => {
           res.status(200).send({ message: "Item deleted successfully." })
         );
     })
-
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
