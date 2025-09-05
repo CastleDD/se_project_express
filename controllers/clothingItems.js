@@ -1,130 +1,82 @@
 const Item = require("../models/clothingItem");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  FORBIDDEN,
-  INTERNAL_SERVER_ERROR,
-} = require("../utils/errors");
+const BadRequestError = require("../errors/BadRequestError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
+const NotFoundError = require("../errors/NotFoundError");
+const ConflictError = require("../errors/ConflictError");
+const ForbiddenError = require("../errors/ForbiddenError");
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .orFail()
+    .orFail(() => new NotFoundError("Requested resource not found"))
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Requested resource not found" });
-      }
-
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return next(new BadRequestError("Invalid data"));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .orFail()
+    .orFail(() => new NotFoundError("Requested resource not found"))
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Requested resource not found" });
-      }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return next(new BadRequestError("Invalid data"));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   Item.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => {
-      console.error(err);
-      return res.status(INTERNAL_SERVER_ERROR).send({
-        message: "An error has occurred on the server",
-      });
-    });
+    .catch(next);
 };
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
-
-  if (!name || !weather || !imageUrl) {
-    return res
-      .status(BAD_REQUEST)
-      .send({ message: "All fields are required." });
-  }
-
   const owner = req.user._id;
 
-  return Item.create({ name, weather, imageUrl, owner })
+  Item.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
-      console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({
-          message: "Invalid data",
-        });
+        return next(new BadRequestError("Invalid data"));
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({
-        message: "An error has occurred on the server",
-      });
+      return next(err);
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
   Item.findById(itemId)
-    .orFail()
+    .orFail(() => new NotFoundError("Requested resource not found"))
     .then((item) => {
       if (item.owner.toString() !== userId && !item.isDefault) {
-        return res.status(FORBIDDEN).send({
-          message: "You do not have permission to delete this item.",
-        });
-      }
-      return item
-        .deleteOne()
-        .then(() =>
-          res.status(200).send({ message: "Item deleted successfully." })
+        throw new ForbiddenError(
+          "You do not have permission to delete this item."
         );
+      }
+      return item.deleteOne();
     })
+    .then(() => res.status(200).send({ message: "Item deleted successfully." }))
     .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({
-          message: "Requested resource not found",
-        });
-      }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({
-          message: "Invalid data",
-        });
+        return next(new BadRequestError("Invalid data"));
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({
-        message: "An error has occurred on the server",
-      });
+      return next(err);
     });
 };
 
