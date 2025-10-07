@@ -31,3 +31,11 @@ The project demonstrates the use of Express.js, MongoDB, and Mongoose to build a
 `npm run start` — to launch the server
 
 `npm run dev` — to launch the server with the hot reload feature
+
+##### Domain name
+
+Domain name: Weatherappdemo.jumpingcrab.com
+
+###### Github Frontend repo
+
+Link: https://github.com/CastleDD/se_project_react
