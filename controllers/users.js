@@ -14,7 +14,7 @@ const BadRequestError = require("../errors/BadRequestError");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const NotFoundError = require("../errors/NotFoundError");
 const ConflictError = require("../errors/ConflictError");
-const ForbiddenError = require("../errors/ForbiddenError");
+// const ForbiddenError = require("../errors/ForbiddenError");
 
 const login = (req, res, next) => {
   const { email, password } = req.body;

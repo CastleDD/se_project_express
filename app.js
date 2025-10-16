@@ -1,11 +1,16 @@
+require("dotenv").config();
+
+if (!process.env.JWT_SECRET) {
+  console.warn("⚠️ No JWT_SECRET found in environment. Using default dev key.");
+}
+
 const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
-const mainRouter = require("./routes/index");
 const { errors } = require("celebrate");
+const mainRouter = require("./routes/index");
 const errorHandler = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/loggers");
-require("dotenv").config();
 
 const app = express();
 const { PORT = 3001 } = process.env;

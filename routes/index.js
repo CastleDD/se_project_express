@@ -8,7 +8,7 @@ const { login, createUser } = require("../controllers/users");
 const userRouter = require("./users");
 const clothingItemRouter = require("./clothingItems");
 const auth = require("../middlewares/auth");
-const { NOT_FOUND } = require("../utils/errors");
+const NotFoundError = require("../errors/NotFoundError");
 const { getItems } = require("../controllers/clothingItems");
 
 router.post("/signin", validateLogin, login);
@@ -20,8 +20,8 @@ router.use(auth);
 router.use("/items", clothingItemRouter);
 router.use("/users", userRouter);
 
-router.use((req, res) => {
-  res.status(NOT_FOUND).json({ message: "Requested resource not found" });
+router.use((req, res, next) => {
+  next(new NotFoundError())({ message: "Requested resource not found" });
 });
 
 module.exports = router;
