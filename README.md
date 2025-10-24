@@ -39,3 +39,7 @@ Domain name: Weatherappdemo.jumpingcrab.com
 ###### Github Frontend repo
 
 Link: https://github.com/CastleDD/se_project_react
+
+###### Project Pitch Video
+
+Check out [this video](https://drive.google.com/file/d/18QPAtE2oBbD7_Z0rQqJ4opAigMXmgrJK/view?usp=sharing), where I describe my project and some challenges I faced while building it.
