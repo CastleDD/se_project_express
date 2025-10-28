@@ -21,7 +21,7 @@ router.use("/items", clothingItemRouter);
 router.use("/users", userRouter);
 
 router.use((req, res, next) => {
-  next(new NotFoundError())({ message: "Requested resource not found" });
+  next(new NotFoundError())("Requested resource not found");
 });
 
 module.exports = router;

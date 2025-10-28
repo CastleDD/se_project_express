@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    throw new UnauthorizedError({ message: "Authorization required" });
+    throw new UnauthorizedError("Authorization required");
   }
 
   const token = authorization.replace("Bearer ", "");
@@ -16,6 +16,6 @@ module.exports = (req, res, next) => {
     req.user = payload;
     next();
   } catch (err) {
-    throw new UnauthorizedError({ message: "Invalid token" });
+    throw new UnauthorizedError("Invalid token");
   }
 };
